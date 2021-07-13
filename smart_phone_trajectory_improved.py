@@ -8,7 +8,7 @@ from mpl_toolkits import mplot3d
 plt.style.use('seaborn')
 
 # import data from CSV
-df = pd.read_csv('Data/3 1m lifts.csv')
+df = pd.read_csv('Data/Walk_across_room.csv')
 # Take a look at all sensor outputs
 df.plot(subplots=True,sharex=True,layout=(6,6),title=list(df.columns[:-3]),
         legend=False)
@@ -90,10 +90,10 @@ cols_body = ['ACCELEROMETER X (m/s²)','ACCELEROMETER Y (m/s²)',
 
 bodyplot = df.plot(y=cols_body,subplots=True,sharex=True,layout=(3,3),
                    title=cols_body,style='k',alpha=0.5)
-
+plt.show()
 df.plot(y=cols_earth,subplots=True,layout=(3,3),ax=bodyplot,sharex=True,
         style='g',title='Body Frame to Earth Frame Accelerations')
-
+plt.show()
 # Double integrate accelerations to find positions
 x = cumtrapz(cumtrapz(df['EARTH LINEAR ACCELERATION X'],dx=dt),dx=dt)
 y = cumtrapz(cumtrapz(df['EARTH LINEAR ACCELERATION Y'],dx=dt),dx=dt)
@@ -103,12 +103,12 @@ z = cumtrapz(cumtrapz(df['EARTH LINEAR ACCELERATION Z'],dx=dt),dx=dt)
 fig3,ax = plt.subplots()
 fig3.suptitle('3D Trajectory of phone',fontsize=20)
 ax = plt.axes(projection='3d')
-ax.plot3D(x,y,z,c='red',lw=5,label='phone trajectory')
+ax.plot3D(x,y,z,c='black',lw=5,label='phone trajectory')
 ax.set_xlabel('X position (m)')
 ax.set_ylabel('Y position (m)')
 ax.set_zlabel('Z position (m)')
 ax.legend(fontsize=20)
-
+plt.show()
 # # Notice drift in position
 
 # Try to remove noise via Fourier analysis
@@ -129,6 +129,7 @@ ax2.legend()
 ax3.plot(freq,abs(fft_z),c='g',label='z noise')
 ax3.legend()
 ax3.set_xlabel('Frequency (Hz)')
+plt.show()
 
 # Attenuate noise in X,Y below 1Hz by 0.2
 atten_x_fft = np.where(freq < 15,fft_x * 0.1, fft_x)
@@ -147,18 +148,44 @@ rawplot = df.plot(y=cols_raw,subplots=True,sharex=True,layout=(1,3),style='k',
                     title=cols_raw,alpha=0.5,legend=False)
 
 df.plot(y=cols_new,subplots=True,layout=(1,3),ax=rawplot,sharex=True,style='g',legend=False)
-
+plt.show()
 # Double integrate accelerations to calculate coordinate positions
-x = cumtrapz(cumtrapz(df['x_ifft'],dx=dt),dx=dt)
-y = cumtrapz(cumtrapz(df['y_ifft'],dx=dt),dx=dt)
-z = cumtrapz(cumtrapz(df['z_ifft'],dx=dt),dx=dt)
+xi = cumtrapz(cumtrapz(df['x_ifft'],dx=dt),dx=dt)
+yi = cumtrapz(cumtrapz(df['y_ifft'],dx=dt),dx=dt)
+zi = cumtrapz(cumtrapz(df['z_ifft'],dx=dt),dx=dt)
 # Plot attenuated 3D Trajectory
-ax.plot3D(x,y,z,'k',lw=5,label='Attenuated phone trajectory')
+fig3,ax = plt.subplots()
+fig3.suptitle('3D Attenuated Trajectory of phone',fontsize=20)
+ax = plt.axes(projection='3d')
+ax.plot3D(xi,yi,zi,c='red',lw=5,label='Attenuated phone trajectory')
 ax.set_xlabel('X position (m)')
 ax.set_ylabel('Y position (m)')
 ax.set_zlabel('Z position (m)')
-ax.legend(fontsize='x-large')
+ax.legend(fontsize=20)
+plt.show()
 
+#plot combined
+fig3,ax = plt.subplots()
+fig3.suptitle('3D combined Trajectory of phone',fontsize=20)
+ax = plt.axes(projection='3d')
+ax.plot3D(x,y,z,c='black',lw=5,label='phone trajectory')
+ax.plot3D(xi,yi,zi,c='red',lw=5,label='Attenuated phone trajectory')
+ax.set_xlabel('X position (m)')
+ax.set_ylabel('Y position (m)')
+ax.set_zlabel('Z position (m)')
+ax.legend(fontsize=20)
+plt.show()
+
+# Plot attenuated 3D Trajectory
+fig3,ax = plt.subplots()
+fig3.suptitle('3D Attenuated Trajectory of phone',fontsize=20)
+ax = plt.axes(projection='3d')
+ax.plot3D(x,y,z,c='red',lw=5,label='Attenuated phone trajectory')
+ax.set_xlabel('X position (m)')
+ax.set_ylabel('Y position (m)')
+ax.set_zlabel('Z position (m)')
+ax.legend(fontsize=20)
+plt.show()
 # =============================================================================
 # # Kalman Filter Z position with barometer
 # =============================================================================
@@ -277,7 +304,7 @@ axs[2].legend(fontsize=25,loc='best')
 # Plot new trajectory on 3D plot
 ax.plot3D(x,y,X_pos[:-2],'g',lw=5,label='Kalman Filtered phone trajectory')
 ax.legend(fontsize='x-large')
-
+plt.show()
 
 # # Add XYZ axis arrows to indicate phone pose
 #     # Earth 3 axis vectors

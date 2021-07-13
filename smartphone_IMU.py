@@ -10,10 +10,11 @@ from mpl_toolkits import mplot3d
 plt.style.use('seaborn')
 
 # import data from CSV
-df = pd.read_csv('Data/Lift 1m.csv')
+df = pd.read_csv('Data/Walk_across_room.csv')
 # Take a look at all sensor outputs
 df.plot(subplots=True,sharex=True,layout=(6,6),title=list(df.columns[:-1]),
         legend=False)
+plt.show()
 dt = 0.01 # Sampling at 100Hz
 # Convert orientation units to radians
 cols_angles = ['ORIENTATION X (pitch °)','ORIENTATION Y (roll °)',
@@ -147,7 +148,10 @@ cols_new = ['x_ifft','y_ifft','z_ifft']
 rawplot = df.plot(y=cols_raw,subplots=True,sharex=True,layout=(1,3),style='k',
                     title=cols_raw,alpha=0.5)
 
+
+
 df.plot(y=cols_new,subplots=True,layout=(1,3),ax=rawplot,sharex=True,style='g')
+
 
 # Double integrate accelerations to calculate coordinate positions
 x = cumtrapz(cumtrapz(df['x_ifft'],dx=dt),dx=dt)
